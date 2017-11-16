@@ -178,7 +178,7 @@ module.exports = function getBaseConfig({
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',
         openAnalyzer: false,
-        logLevel: 'error',
+        logLevel: verbose ? 'info' : 'error',
       })
     )
   }
@@ -188,33 +188,73 @@ module.exports = function getBaseConfig({
     plugins.push(new webpack.HotModuleReplacementPlugin())
   }
 
-  if (debug && server) {
-    // Server debug
-    // Start and restart server
-    class ServerDevPlugin {
-      apply(compiler) {
-        compiler.plugin('done', () => {
-          if (this.server) {
-            // eslint-disable-next-line
-            console.log(` ${chalk.cyan('↻')} Restarting node server`)
-            this.server.kill()
-          } else {
-            // eslint-disable-next-line
-            console.log(` ${chalk.green('⏻')} Starting node server`)
-          }
-
-          this.server = childProcess.fork(
-            path.resolve(dirs.dist, 'server.js'),
-            {
-              cwd,
-              silent: false,
-              execArgv: inspect ? ['--inspect'] : [],
-            }
-          )
-        })
+  if (debug) {
+    const time = stats => {
+      let t = stats.endTime - stats.startTime
+      let unit = 'ms'
+      if (t > 60000) {
+        t /= 60000
+        unit = 'm'
+      } else if (t > 1000) {
+        t /= 1000
+        unit = 's'
       }
+      return `${chalk.yellow('⚙')} ${chalk.white(t)}${chalk.gray(unit)}`
     }
-    plugins.push(new ServerDevPlugin())
+    if (server) {
+      // Server debug
+      // Start and restart server
+      console.log(
+        `  ${chalk.magenta('⯂')} Node koaze server: ${chalk.blue(
+          serverUrl.href
+        )}`
+      )
+      class ServerDevPlugin {
+        apply(compiler) {
+          compiler.plugin('done', stats => {
+            if (this.server) {
+              // eslint-disable-next-line
+              console.log(
+                `  ${chalk.cyan('↻')} Restarting node server. ${time(stats)}`
+              )
+              this.server.kill()
+            } else {
+              // eslint-disable-next-line
+              console.log(
+                `  ${chalk.green('⏻')} Starting node server.   ${time(stats)}`
+              )
+            }
+
+            this.server = childProcess.fork(
+              path.resolve(dirs.dist, 'server.js'),
+              {
+                cwd,
+                silent: false,
+                execArgv: inspect ? ['--inspect'] : [],
+              }
+            )
+          })
+        }
+      }
+      plugins.push(new ServerDevPlugin())
+    } else {
+      console.log(
+        `  ${chalk.magenta('⯃')} Development web server: ${chalk.blue(
+          assetsUrl.href
+        )}`
+      )
+      class ClientDevPlugin {
+        apply(compiler) {
+          compiler.plugin('done', stats => {
+            const end = new Date().getTime() - this.compilationStart
+            console.log(
+              `  ${chalk.magenta('⚛')} Browser client ready.   ${time(stats)}`
+            )
+          })
+        }
+      }
+      plugins.push(new ClientDevPlugin())
+    }
   }
 
   if (!debug && !server) {
@@ -228,7 +268,28 @@ module.exports = function getBaseConfig({
       new MinifyPlugin()
     )
   }
-  const stats = verbose ? 'verbose' : 'errors-only'
+
+  const stats = verbose
+    ? {
+        entrypoints: true,
+        chunks: true,
+        chunkModules: false,
+        chunkOrigins: true,
+        colors: true,
+        depth: true,
+        usedExports: true,
+        providedExports: true,
+        optimizationBailout: true,
+        errorDetails: true,
+        publicPath: true,
+        performance: true,
+        reasons: true,
+        exclude: () => false,
+        maxModules: Infinity,
+        warnings: true,
+      }
+    : 'errors-only'
+
   const conf = {
     devtool: debug ? 'cheap-module-source-map' : 'source-map',
     entry,
@@ -261,15 +322,18 @@ module.exports = function getBaseConfig({
         {
           context: ['/api'],
           target: apiUrl.href,
+          logLevel: verbose ? 'info' : 'error',
         },
         {
           context: ['/polyfill.js', '/favicon.ico'],
           target: serverUrl.href,
+          logLevel: verbose ? 'info' : 'error',
         },
         {
           context: ['/assets'],
           target: assetsUrl.href,
           pathRewrite: { '^/assets': '' },
+          logLevel: verbose ? 'info' : 'error',
         },
       ],
       publicPath: '/',
