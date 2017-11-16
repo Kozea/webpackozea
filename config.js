@@ -296,7 +296,33 @@ module.exports = function getBaseConfig({
         maxModules: Infinity,
         warnings: true,
       }
-    : 'errors-only'
+    : {
+        assets: false,
+        cached: false,
+        cachedAssets: false,
+        children: false,
+        chunks: false,
+        chunkModules: false,
+        chunkOrigins: false,
+        colors: true,
+        depth: false,
+        entrypoints: false,
+        env: false,
+        errors: true,
+        errorDetails: true,
+        hash: false,
+        modules: false,
+        moduleTrace: false,
+        performance: false,
+        providedExports: false,
+        publicPath: false,
+        reasons: false,
+        source: false,
+        timings: false,
+        usedExports: false,
+        version: false,
+        warnings: false,
+      }
 
   const conf = {
     devtool: debug ? 'cheap-module-source-map' : 'source-map',
@@ -348,7 +374,6 @@ module.exports = function getBaseConfig({
       disableHostCheck: true,
       compress: true,
       noInfo: !verbose,
-      quiet: !verbose,
       hot: true,
       overlay: true,
       historyApiFallback: true,
@@ -375,6 +400,22 @@ module.exports = function getBaseConfig({
         whitelist: [/\.css$/],
       }),
     ]
+  }
+  // Patching output
+  if (!verbose) {
+    originalLog = console.log
+    console.log = (...args) => {
+      if (
+        args.some(arg =>
+          arg.match(
+            /Webpack is watching the files…|Project is running at|webpack output is served from|404s will fallback to/
+          )
+        )
+      ) {
+        return
+      }
+      originalLog(...args)
+    }
   }
   return conf
 }
