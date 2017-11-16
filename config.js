@@ -105,14 +105,22 @@ module.exports = function getBaseConfig({
         },
       },
     ]
-    // Extract it in css files
-    rules.push({
-      test: /\.sass$/i,
-      use: ExtractTextPlugin.extract({
-        fallback: 'style-loader',
-        use: sassToCssLoaders,
-      }),
-    })
+    if (debug) {
+      // Load it like style tags
+      rules.push({
+        test: /\.sass$/i,
+        use: [styleLoader].concat(sassToCssLoaders),
+      })
+    } else {
+      // Extract it in css files
+      rules.push({
+        test: /\.sass$/i,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: sassToCssLoaders,
+        }),
+      })
+    }
     // Css for deps
     rules.push({
       test: /\.css$/i,
