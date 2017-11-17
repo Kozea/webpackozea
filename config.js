@@ -48,6 +48,7 @@ module.exports = function getBaseConfig({
       use: {
         loader: 'babel-loader',
         options: {
+          cacheDirectory: true,
           babelrc: false,
           presets: [
             'react',
@@ -151,7 +152,6 @@ module.exports = function getBaseConfig({
     // Common client
     plugins.push(
       new HtmlWebpackPlugin({
-        alwaysWriteToDisk: true,
         cache: !debug,
         template: `${dirs.src}/index.ejs`,
       }),
