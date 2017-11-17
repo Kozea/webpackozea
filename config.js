@@ -359,7 +359,7 @@ module.exports = function getBaseConfig({
           logLevel: verbose ? 'info' : 'error',
         },
         {
-          context: ['/polyfill.js', '/favicon.ico'],
+          context: ['/static', '/polyfill.js', '/favicon.ico'],
           target: serverUrl.href,
           logLevel: verbose ? 'info' : 'error',
         },
