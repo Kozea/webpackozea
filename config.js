@@ -1,30 +1,31 @@
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const ManifestPlugin = require('webpack-manifest-plugin')
+const MinifyPlugin = require('babel-minify-webpack-plugin')
+const chalk = require('chalk')
+const nodeExternals = require('webpack-node-externals')
+const webpack = require('webpack')
+
 const childProcess = require('child_process')
 const path = require('path')
 
-const MinifyPlugin = require('babel-minify-webpack-plugin')
-const chalk = require('chalk')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
-const webpack = require('webpack')
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const ManifestPlugin = require('webpack-manifest-plugin')
-const nodeExternals = require('webpack-node-externals')
-
-module.exports = function getBaseConfig({
-  apiUrl,
-  assetsUrl,
-  cwd,
-  debug,
-  dirs,
-  forcePolyfill,
-  inspect,
-  publicPath,
-  server,
-  serverUrl,
-  staging,
-  verbose,
-}) {
+module.exports = function getBaseConfig(
+  {
+    apiUrl,
+    assetsUrl,
+    cwd,
+    debug,
+    dirs,
+    forcePolyfill,
+    inspect,
+    publicPath,
+    server,
+    serverUrl,
+    staging,
+    verbose,
+  },
+  renderHtml
+) {
   const main = server ? 'server' : 'client'
 
   const entry = {}
@@ -131,7 +132,9 @@ module.exports = function getBaseConfig({
   // Plugins
   const plugins = [
     // Common all
-    new ManifestPlugin(),
+    new ManifestPlugin({
+      writeToFileEmit: true,
+    }),
     // DON'T use JSON stringify and yes it needs multiple quotes
     // (JSON is imported by babel in a file that use module.exports => X[)
     new webpack.DefinePlugin({
@@ -151,17 +154,7 @@ module.exports = function getBaseConfig({
   if (!server) {
     // Common client
     plugins.push(
-      new HtmlWebpackPlugin({
-        cache: !debug,
-        template: `${dirs.src}/index.ejs`,
-      }),
-      // Puts every deps in a vendor bundle
-      // new webpack.optimize.CommonsChunkPlugin({
-      //   name: 'vendor',
-      //   chunks: ['client', 'Admin'],
-      //   minChunks: ({ resource }) => /node_modules/.test(resource)
-      // }),
-      // Or put only shared deps
+      // Put shared deps in a vendor bundle
       new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
         minChunks: module =>
@@ -171,17 +164,6 @@ module.exports = function getBaseConfig({
       new webpack.optimize.CommonsChunkPlugin({
         name: 'manifest',
         minChunks: Infinity,
-      }),
-      // Inline manifest (~1kb) and defer scripts
-      new ScriptExtHtmlWebpackPlugin({
-        inline: /manifest.*\.js$/,
-        defaultAttribute: 'defer',
-        // Remove prefetch for now as it slows the load
-        // (and there's too many async)
-        // prefetch: {
-        //   test: /\.js$/,
-        //   chunks: 'async'
-        // }
       }),
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',
@@ -194,6 +176,19 @@ module.exports = function getBaseConfig({
   if (debug && !server) {
     // Client _debug
     plugins.push(new webpack.HotModuleReplacementPlugin())
+    class HtmlPlugin {
+      apply(compiler) {
+        compiler.plugin('emit', (compilation, callback) => {
+          const html = renderHtml()
+          compilation.assets['index.html'] = {
+            size: () => html.length,
+            source: () => html,
+          }
+          callback()
+        })
+      }
+    }
+    renderHtml && plugins.push(new HtmlPlugin())
   }
 
   if (debug) {
@@ -363,20 +358,15 @@ module.exports = function getBaseConfig({
           target: serverUrl.href,
           logLevel: verbose ? 'info' : 'error',
         },
-        {
-          context: ['/assets'],
-          target: assetsUrl.href,
-          pathRewrite: { '^/assets': '' },
-          logLevel: verbose ? 'info' : 'error',
-        },
       ],
-      publicPath: '/',
       disableHostCheck: true,
       compress: true,
       noInfo: !verbose,
       hot: true,
       overlay: true,
-      historyApiFallback: true,
+      historyApiFallback: {
+        index: '/assets/index.html',
+      },
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
