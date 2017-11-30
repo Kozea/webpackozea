@@ -52,24 +52,27 @@ module.exports = function getBaseConfig(
           cacheDirectory: true,
           babelrc: false,
           presets: [
-            'react',
-            [
-              'env',
-              {
-                targets: server
-                  ? { node: true }
-                  : {
+            '@babel/preset-react',
+            server
+              ? '@babel/preset-env'
+              : [
+                  '@babel/preset-env',
+                  {
+                    targets: {
                       browsers:
                         debug && !forcePolyfill
                           ? ['last 1 Chrome version']
                           : ['> 3% in FR', 'last 2 versions', 'not ie <= 10'],
                     },
-                modules: false,
-                debug: verbose,
-              },
-            ],
+                    modules: false,
+                    debug: verbose,
+                  },
+                ],
           ],
-          plugins: ['syntax-dynamic-import', 'transform-object-rest-spread'],
+          plugins: [
+            '@babel/plugin-proposal-object-rest-spread',
+            '@babel/plugin-proposal-decorators',
+          ],
         },
       },
     },

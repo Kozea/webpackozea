@@ -730,8 +730,8 @@ content-type@~1.0.4:
   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.4.tgz#e138cc75e040c727b1966fe5e5f8c9aee256fe3b"
 
 convert-source-map@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.5.0.tgz#9acd70851c6d5dfdd93d9282e5edf94a03ff46b5"
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.5.1.tgz#b8278097b9bc229365de5c62cf5fcaed8b5599e5"
 
 cookie-signature@1.0.6:
   version "1.0.6"
@@ -2691,9 +2691,9 @@ webpack-sources@^1.0.1:
     source-list-map "^2.0.0"
     source-map "~0.5.3"
 
-webpack@^3.8.1:
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.8.1.tgz#b16968a81100abe61608b0153c9159ef8bb2bd83"
+webpack@^3.9.0:
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.9.0.tgz#7d65ca4ba92ae1b67be2c00b217fb990b8ffa97f"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^2.0.0"
