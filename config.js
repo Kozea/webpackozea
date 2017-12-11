@@ -1,3 +1,8 @@
+/* eslint-env node */
+
+const childProcess = require('child_process')
+const path = require('path')
+
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
@@ -5,9 +10,6 @@ const MinifyPlugin = require('babel-minify-webpack-plugin')
 const chalk = require('chalk')
 const nodeExternals = require('webpack-node-externals')
 const webpack = require('webpack')
-
-const childProcess = require('child_process')
-const path = require('path')
 
 module.exports = function getBaseConfig(
   {
@@ -354,7 +356,7 @@ module.exports = function getBaseConfig(
           logLevel: verbose ? 'info' : 'error',
         },
         {
-          context: ['/static', '/polyfill.js', '/favicon.ico'],
+          context: ['/static', '/favicon.ico'],
           target: serverUrl.href,
           logLevel: verbose ? 'info' : 'error',
         },
