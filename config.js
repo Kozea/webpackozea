@@ -54,9 +54,9 @@ module.exports = function getBaseConfig(
           cacheDirectory: true,
           babelrc: false,
           presets: [
-            'react',
+            '@babel/preset-react',
             [
-              'env',
+              '@babel/preset-env',
               {
                 targets: server
                   ? { node: true }
@@ -71,7 +71,10 @@ module.exports = function getBaseConfig(
               },
             ],
           ].concat(debug ? [] : ['minify']),
-          plugins: ['syntax-dynamic-import', 'transform-object-rest-spread'],
+          plugins: [
+            '@babel/plugin-syntax-dynamic-import',
+            '@babel/plugin-proposal-object-rest-spread',
+          ],
         },
       },
     },
