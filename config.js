@@ -7,6 +7,7 @@ const path = require('path')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
+const MinifyPlugin = require('babel-minify-webpack-plugin')
 const chalk = require('chalk')
 const nodeExternals = require('webpack-node-externals')
 const webpack = require('webpack')
@@ -70,7 +71,7 @@ module.exports = function getBaseConfig(
                 debug: verbose,
               },
             ],
-          ].concat(debug ? [] : ['minify']),
+          ],
           plugins: [
             '@babel/plugin-syntax-dynamic-import',
             '@babel/plugin-proposal-object-rest-spread',
@@ -271,7 +272,8 @@ module.exports = function getBaseConfig(
         filename: '[name].[chunkhash].css',
         allChunks: true,
       }),
-      new webpack.optimize.ModuleConcatenationPlugin()
+      new webpack.optimize.ModuleConcatenationPlugin(),
+      new MinifyPlugin()
     )
   }
 
@@ -323,7 +325,7 @@ module.exports = function getBaseConfig(
       }
 
   const conf = {
-    devtool: debug ? 'cheap-module-source-map' : 'source-map',
+    devtool: debug && 'cheap-module-source-map',
     entry,
     // Defines the output file for the html script tag
     output: {
