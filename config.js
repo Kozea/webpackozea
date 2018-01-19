@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* eslint-disable no-console */
 
 const childProcess = require('child_process')
 const path = require('path')
@@ -6,7 +7,6 @@ const path = require('path')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
-const MinifyPlugin = require('babel-minify-webpack-plugin')
 const chalk = require('chalk')
 const nodeExternals = require('webpack-node-externals')
 const webpack = require('webpack')
@@ -70,7 +70,7 @@ module.exports = function getBaseConfig(
                 debug: verbose,
               },
             ],
-          ],
+          ].concat(debug ? [] : ['minify']),
           plugins: ['syntax-dynamic-import', 'transform-object-rest-spread'],
         },
       },
@@ -251,7 +251,6 @@ module.exports = function getBaseConfig(
       class ClientDevPlugin {
         apply(compiler) {
           compiler.plugin('done', stats => {
-            const end = new Date().getTime() - this.compilationStart
             console.log(
               `  ${chalk.magenta('⚛')} Browser client ready.   ${time(stats)}`
             )
@@ -269,8 +268,7 @@ module.exports = function getBaseConfig(
         filename: '[name].[chunkhash].css',
         allChunks: true,
       }),
-      new webpack.optimize.ModuleConcatenationPlugin(),
-      new MinifyPlugin()
+      new webpack.optimize.ModuleConcatenationPlugin()
     )
   }
 
@@ -395,11 +393,12 @@ module.exports = function getBaseConfig(
   }
   // Patching output
   if (!verbose) {
-    originalLog = console.log
+    const originalLog = console.log
     console.log = (...args) => {
       if (
         args.some(arg =>
           arg.match(
+            // eslint-disable-next-line max-len
             /Webpack is watching the files…|Project is running at|webpack output is served from|404s will fallback to/
           )
         )
