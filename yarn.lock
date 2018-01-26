@@ -208,6 +208,12 @@
     "@babel/helper-remap-async-to-generator" "7.0.0-beta.38"
     "@babel/plugin-syntax-async-generators" "7.0.0-beta.38"
 
+"@babel/plugin-proposal-decorators@^7.0.0-beta.38":
+  version "7.0.0-beta.38"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-decorators/-/plugin-proposal-decorators-7.0.0-beta.38.tgz#888903d395d902b763c4833e2bbf2f3d67e8155b"
+  dependencies:
+    "@babel/plugin-syntax-decorators" "7.0.0-beta.38"
+
 "@babel/plugin-proposal-object-rest-spread@7.0.0-beta.38", "@babel/plugin-proposal-object-rest-spread@^7.0.0-beta.38":
   version "7.0.0-beta.38"
   resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-object-rest-spread/-/plugin-proposal-object-rest-spread-7.0.0-beta.38.tgz#4c9bee9cd4d905bf7531a722daf430183282c000"
@@ -230,6 +236,10 @@
 "@babel/plugin-syntax-async-generators@7.0.0-beta.38":
   version "7.0.0-beta.38"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-async-generators/-/plugin-syntax-async-generators-7.0.0-beta.38.tgz#1224bcd4a5052e6e4c0eb95c96bbe9f617a119f4"
+
+"@babel/plugin-syntax-decorators@7.0.0-beta.38":
+  version "7.0.0-beta.38"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-decorators/-/plugin-syntax-decorators-7.0.0-beta.38.tgz#902cdc212cd3a6b10f9b1ed681a7fea0f5c87f65"
 
 "@babel/plugin-syntax-dynamic-import@^7.0.0-beta.38":
   version "7.0.0-beta.38"
