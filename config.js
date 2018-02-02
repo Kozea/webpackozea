@@ -274,7 +274,7 @@ module.exports = function getBaseConfig(
         allChunks: true,
       }),
       new webpack.optimize.ModuleConcatenationPlugin(),
-      new MinifyPlugin()
+      new MinifyPlugin({ keepFnName: true, keepClassName: true })
     )
   }
 
