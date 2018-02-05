@@ -76,6 +76,7 @@ module.exports = function getBaseConfig(
             '@babel/plugin-syntax-dynamic-import',
             '@babel/plugin-proposal-object-rest-spread',
             '@babel/plugin-proposal-decorators',
+            'add-react-displayname-babel7'
           ],
         },
       },
@@ -274,7 +275,7 @@ module.exports = function getBaseConfig(
         allChunks: true,
       }),
       new webpack.optimize.ModuleConcatenationPlugin(),
-      new MinifyPlugin({ keepFnName: true, keepClassName: true })
+      new MinifyPlugin()
     )
   }
 

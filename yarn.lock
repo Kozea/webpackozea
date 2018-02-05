@@ -868,6 +868,10 @@ babel-minify-webpack-plugin@^0.2.0:
     babel-preset-minify "^0.2.0"
     webpack-sources "^1.0.1"
 
+babel-plugin-add-react-displayname-babel7@^0.0.6-beta:
+  version "0.0.6-beta"
+  resolved "https://registry.yarnpkg.com/babel-plugin-add-react-displayname-babel7/-/babel-plugin-add-react-displayname-babel7-0.0.6-beta.tgz#80b69976b7aefc5eedda0566b095f9eb1c5f331f"
+
 babel-plugin-minify-builtins@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-minify-builtins/-/babel-plugin-minify-builtins-0.2.0.tgz#317f824b0907210b6348671bb040ca072e2e0c82"
