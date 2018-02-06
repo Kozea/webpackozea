@@ -76,8 +76,9 @@ module.exports = function getBaseConfig(
             '@babel/plugin-syntax-dynamic-import',
             '@babel/plugin-proposal-object-rest-spread',
             '@babel/plugin-proposal-decorators',
-            'add-react-displayname-babel7'
-          ],
+            !server && 'add-react-static-displayname',
+            ['@babel/plugin-proposal-class-properties', { loose: true }],
+          ].filter(_ => _),
         },
       },
     },
@@ -403,11 +404,14 @@ module.exports = function getBaseConfig(
     const originalLog = console.log
     console.log = (...args) => {
       if (
-        args.some(arg =>
-          arg.match(
-            // eslint-disable-next-line max-len
-            /Webpack is watching the files…|Project is running at|webpack output is served from|404s will fallback to/
-          )
+        args.some(
+          arg =>
+            arg &&
+            typeof arg === 'string' &&
+            arg.match(
+              // eslint-disable-next-line max-len
+              /Webpack is watching the files…|Project is running at|webpack output is served from|404s will fallback to/
+            )
         )
       ) {
         return
