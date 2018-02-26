@@ -7,7 +7,7 @@ const path = require('path')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
-const MinifyPlugin = require('babel-minify-webpack-plugin')
+// const MinifyPlugin = require('babel-minify-webpack-plugin')
 const chalk = require('chalk')
 const nodeExternals = require('webpack-node-externals')
 const webpack = require('webpack')
@@ -152,29 +152,29 @@ module.exports = function getBaseConfig(
       'process.env.STAGING': `${staging}`,
     }),
   ]
-  if (debug) {
-    // Common debug
-    plugins.push(
-      new webpack.NamedModulesPlugin(),
-      new webpack.NoEmitOnErrorsPlugin()
-    )
-  } else {
-    plugins.push(new webpack.HashedModuleIdsPlugin())
-  }
+  // if (debug) {
+  // Common debug
+  // plugins.push(
+  //   // new webpack.NamedModulesPlugin()
+  //   // new webpack.NoEmitOnErrorsPlugin()
+  // )
+  // } else {
+  //   plugins.push(new webpack.HashedModuleIdsPlugin())
+  // }
   if (!server) {
     // Common client
     plugins.push(
       // Put shared deps in a vendor bundle
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        minChunks: module =>
-          module.context && module.context.includes('node_modules'),
-      }),
+      // new webpack.optimize.CommonsChunkPlugin({
+      //   name: 'vendor',
+      //   minChunks: module =>
+      //     module.context && module.context.includes('node_modules'),
+      // }),
       // manifest contains build changes to keep vendor hash stable (caching)
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'manifest',
-        minChunks: Infinity,
-      }),
+      // new webpack.optimize.CommonsChunkPlugin({
+      //   name: 'manifest',
+      //   minChunks: Infinity,
+      // }),
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',
         openAnalyzer: false,
@@ -275,9 +275,9 @@ module.exports = function getBaseConfig(
       new ExtractTextPlugin({
         filename: '[name].[chunkhash].css',
         allChunks: true,
-      }),
-      new webpack.optimize.ModuleConcatenationPlugin(),
-      new MinifyPlugin()
+      })
+      // new webpack.optimize.ModuleConcatenationPlugin()
+      // new MinifyPlugin()
     )
   }
 
@@ -329,7 +329,7 @@ module.exports = function getBaseConfig(
       }
 
   const conf = {
-    devtool: debug && 'cheap-module-source-map',
+    mode: debug ? 'development' : 'production',
     entry,
     // Defines the output file for the html script tag
     output: {
