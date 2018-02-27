@@ -75,7 +75,7 @@ module.exports = function getBaseConfig(
             '@babel/plugin-syntax-dynamic-import',
             '@babel/plugin-proposal-object-rest-spread',
             '@babel/plugin-proposal-decorators',
-            !server && 'add-react-static-displayname',
+            'add-react-static-displayname',
             ['@babel/plugin-proposal-class-properties', { loose: true }],
             '@babel/plugin-transform-classes',
           ].filter(_ => _),
@@ -105,9 +105,6 @@ module.exports = function getBaseConfig(
     }
     const sassToCssLoaders = [
       cssLoader,
-      // {
-      //   loader: 'resolve-url-loader',
-      // },
       {
         loader: 'sass-loader',
         options: {
@@ -151,29 +148,9 @@ module.exports = function getBaseConfig(
       'process.env.STAGING': `${staging}`,
     }),
   ]
-  // if (debug) {
-  // Common debug
-  // plugins.push(
-  //   // new webpack.NamedModulesPlugin()
-  //   // new webpack.NoEmitOnErrorsPlugin()
-  // )
-  // } else {
-  //   plugins.push(new webpack.HashedModuleIdsPlugin())
-  // }
   if (!server) {
     // Common client
     plugins.push(
-      // Put shared deps in a vendor bundle
-      // new webpack.optimize.CommonsChunkPlugin({
-      //   name: 'vendor',
-      //   minChunks: module =>
-      //     module.context && module.context.includes('node_modules'),
-      // }),
-      // manifest contains build changes to keep vendor hash stable (caching)
-      // new webpack.optimize.CommonsChunkPlugin({
-      //   name: 'manifest',
-      //   minChunks: Infinity,
-      // }),
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',
         openAnalyzer: false,
@@ -325,6 +302,7 @@ module.exports = function getBaseConfig(
         version: false,
         warnings: false,
       }
+  const filename = debug || server ? '[name].js' : '[name].[chunkhash].js'
 
   const conf = {
     mode: debug ? 'development' : 'production',
@@ -332,14 +310,22 @@ module.exports = function getBaseConfig(
     // Defines the output file for the html script tag
     output: {
       path: server ? dirs.dist : dirs.assets,
-      filename: debug || server ? '[name].js' : '[name].[chunkhash].js',
-      chunkFilename: debug ? '[name].js' : '[name].[chunkhash].js',
+      filename,
+      // We might need to remove [name] here for long time cache
+      chunkFilename: filename,
       publicPath,
       libraryTarget: server ? 'commonjs2' : void 0,
     },
     watch: debug && server ? true : void 0,
     target: server ? 'node' : 'web',
-
+    optimization: server
+      ? void 0
+      : {
+          runtimeChunk: true,
+          splitChunks: {
+            chunks: 'all',
+          },
+        },
     performance: {
       hints: debug || server ? false : 'warning',
     },

@@ -4212,14 +4212,6 @@ webpack-bundle-analyzer@^2.11.0:
     opener "^1.4.3"
     ws "^4.0.0"
 
-webpack-manifest-plugin@^2.0.0-rc.1:
-  version "2.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/webpack-manifest-plugin/-/webpack-manifest-plugin-2.0.0-rc.1.tgz#82b03afd05a308a36a6066f1c37ac9ff1c9d5e8a"
-  dependencies:
-    fs-extra "^0.30.0"
-    lodash ">=3.5 <5"
-    mutexify "1.0.1"
-
 webpack-manifest-plugin@danethurber/webpack-manifest-plugin:
   version "2.0.0-rc.1"
   resolved "https://codeload.github.com/danethurber/webpack-manifest-plugin/tar.gz/661af133c04df17cac77641356e4bff3a949b71c"
@@ -4239,9 +4231,9 @@ webpack-sources@^1.0.1, webpack-sources@^1.1.0:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-webpack@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.0.0.tgz#423c2d27cb050e7655c6ea25ce27bfcbfcb56731"
+webpack@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.0.1.tgz#768d708beeca4c5f77f6c2d38a240fb6ff50ba5d"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^3.0.0"
