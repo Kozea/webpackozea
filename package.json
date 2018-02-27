@@ -1,6 +1,6 @@
 {
   "name": "webpackozea",
-  "version": "0.0.20-alpha.1",
+  "version": "0.0.20-alpha.2",
   "description": "A base webpack configuration",
   "main": "config.js",
   "repository": "https://github.com/Kozea/webpackozea",
