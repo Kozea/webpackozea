@@ -6,9 +6,8 @@ const path = require('path')
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const ManifestPlugin = require('webpack-manifest-plugin')
-// const MinifyPlugin = require('babel-minify-webpack-plugin')
 const chalk = require('chalk')
+const ManifestPlugin = require('webpack-manifest-plugin')
 const nodeExternals = require('webpack-node-externals')
 const webpack = require('webpack')
 
@@ -106,9 +105,9 @@ module.exports = function getBaseConfig(
     }
     const sassToCssLoaders = [
       cssLoader,
-      {
-        loader: 'resolve-url-loader',
-      },
+      // {
+      //   loader: 'resolve-url-loader',
+      // },
       {
         loader: 'sass-loader',
         options: {
@@ -188,13 +187,12 @@ module.exports = function getBaseConfig(
     plugins.push(new webpack.HotModuleReplacementPlugin())
     class HtmlPlugin {
       apply(compiler) {
-        compiler.plugin('emit', (compilation, callback) => {
+        compiler.hooks.emit.tap('WebpackozeaHtmlPlugin', compilation => {
           const html = renderHtml()
           compilation.assets['index.html'] = {
             size: () => html.length,
             source: () => html,
           }
-          callback()
         })
       }
     }
@@ -224,7 +222,7 @@ module.exports = function getBaseConfig(
       )
       class ServerDevPlugin {
         apply(compiler) {
-          compiler.plugin('done', stats => {
+          compiler.hooks.done.tap('WebpackozeaServerDevPlugin', stats => {
             if (this.server) {
               // eslint-disable-next-line
               console.log(
@@ -258,7 +256,7 @@ module.exports = function getBaseConfig(
       )
       class ClientDevPlugin {
         apply(compiler) {
-          compiler.plugin('done', stats => {
+          compiler.hooks.done.tap('WebpackozeaClientDevPlugin', stats => {
             console.log(
               `  ${chalk.magenta('⚛')} Browser client ready.   ${time(stats)}`
             )
