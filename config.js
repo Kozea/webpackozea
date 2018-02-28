@@ -251,8 +251,6 @@ module.exports = function getBaseConfig(
         filename: '[name].[chunkhash].css',
         allChunks: true,
       })
-      // new webpack.optimize.ModuleConcatenationPlugin()
-      // new MinifyPlugin()
     )
   }
 
