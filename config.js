@@ -5,7 +5,7 @@ const childProcess = require('child_process')
 const path = require('path')
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const chalk = require('chalk')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const nodeExternals = require('webpack-node-externals')
@@ -113,22 +113,12 @@ module.exports = function getBaseConfig(
         },
       },
     ]
-    if (debug) {
-      // Load it like style tags
-      rules.push({
-        test: /\.sass$/i,
-        use: [styleLoader].concat(sassToCssLoaders),
-      })
-    } else {
-      // Extract it in css files
-      rules.push({
-        test: /\.sass$/i,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: sassToCssLoaders,
-        }),
-      })
-    }
+    rules.push({
+      test: /\.sass$/i,
+      use: [debug ? styleLoader : MiniCssExtractPlugin.loader].concat(
+        sassToCssLoaders
+      ),
+    })
     // Css for deps
     rules.push({
       test: /\.css$/i,
@@ -247,9 +237,11 @@ module.exports = function getBaseConfig(
   if (!debug && !server) {
     // Client prod
     plugins.push(
-      new ExtractTextPlugin({
+      new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
         filename: '[name].[chunkhash].css',
-        allChunks: true,
+        chunkFilename: '[name].[chunkhash].css',
       })
     )
   }
