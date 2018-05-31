@@ -109,7 +109,7 @@ module.exports = function getBaseConfig(
         loader: 'sass-loader',
         options: {
           sourceMap: true,
-          includePaths: [dirs.src, dirs.styles],
+          includePaths: [dirs.src, dirs.styles, dirs.modules],
         },
       },
     ]
