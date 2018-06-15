@@ -77,7 +77,6 @@ module.exports = function getBaseConfig(
             ['@babel/plugin-proposal-decorators', { legacy: true }],
             'add-react-static-displayname',
             ['@babel/plugin-proposal-class-properties', { loose: true }],
-            '@babel/plugin-transform-classes',
           ].filter(_ => _),
         },
       },
