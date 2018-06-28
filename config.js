@@ -114,9 +114,20 @@ module.exports = function getBaseConfig(
     ]
     rules.push({
       test: /\.sass$/i,
+      exclude: /\.useable\.sass$/i,
       use: [debug ? styleLoader : MiniCssExtractPlugin.loader].concat(
         sassToCssLoaders
       ),
+    })
+    rules.push({
+      test: /\.useable\.sass$/i,
+      use: debug
+        ? [
+            {
+              loader: 'style-loader/useable',
+            },
+          ].concat(sassToCssLoaders)
+        : 'ignore-loader', // For now it seems better to ignore them
     })
     // Css for deps
     rules.push({
