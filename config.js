@@ -332,7 +332,7 @@ module.exports = function getBaseConfig(
     },
 
     resolve: {
-      extensions: ['.js', '.jsx'],
+      extensions: ['.mjs', '.js', '.jsx'],
     },
 
     // Entry points list, allow to load a file with transforms
