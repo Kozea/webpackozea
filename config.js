@@ -278,10 +278,12 @@ module.exports = function getBaseConfig(
       }
     : {
         assets: false,
+        builtAt: false,
         cached: false,
         cachedAssets: false,
         children: false,
         chunks: false,
+        chunkGroups: false,
         chunkModules: false,
         chunkOrigins: false,
         colors: true,
@@ -343,12 +345,7 @@ module.exports = function getBaseConfig(
       port: assetsUrl.port,
       proxy: [
         {
-          context: ['/api'],
-          target: apiUrl.href,
-          logLevel: verbose ? 'info' : 'error',
-        },
-        {
-          context: ['/static', '/favicon.ico'],
+          context: ['/static', '/favicon.ico', '/api'],
           target: serverUrl.href,
           logLevel: verbose ? 'info' : 'error',
         },
@@ -384,26 +381,6 @@ module.exports = function getBaseConfig(
         whitelist: [/\.css$/],
       }),
     ]
-  }
-  // Patching output
-  if (!verbose) {
-    const originalLog = console.log
-    console.log = (...args) => {
-      if (
-        args.some(
-          arg =>
-            arg &&
-            typeof arg === 'string' &&
-            arg.match(
-              // eslint-disable-next-line max-len
-              /Webpack is watching the files…|Project is running at|webpack output is served from|404s will fallback to/
-            )
-        )
-      ) {
-        return
-      }
-      originalLog(...args)
-    }
   }
   return conf
 }
