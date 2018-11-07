@@ -343,13 +343,20 @@ module.exports = function getBaseConfig(
     devServer: {
       host: assetsUrl.hostname,
       port: assetsUrl.port,
-      proxy: [
-        {
-          context: ['/static', '/favicon.ico', '/api'],
-          target: serverUrl.href,
-          logLevel: verbose ? 'info' : 'error',
+      proxy: {
+        '/api': {
+          target: apiUrl.href,
+          logLevel: verbose ? 'debug' : 'warn',
         },
-      ],
+        '/static': {
+          target: serverUrl.href,
+          logLevel: verbose ? 'debug' : 'warn',
+        },
+        '/favicon.ico': {
+          target: serverUrl.href,
+          logLevel: verbose ? 'debug' : 'warn',
+        },
+      },
       disableHostCheck: true,
       compress: true,
       noInfo: !verbose,
