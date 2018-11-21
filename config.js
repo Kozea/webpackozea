@@ -64,7 +64,7 @@ module.exports = function getBaseConfig(
                       browsers:
                         debug && !forcePolyfill
                           ? ['last 1 Chrome version']
-                          : ['> 3% in FR', 'last 2 versions', 'not ie <= 10'],
+                          : ['> .5% in FR'],
                     },
                 modules: false,
                 debug: verbose,
