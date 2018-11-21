@@ -37,9 +37,6 @@ module.exports = function getBaseConfig(
   if (debug && !server) {
     entry[main].push(`webpack-dev-server/client?${assetsUrl.href}`)
   }
-  if ((!debug || forcePolyfill) && !server) {
-    entry[main].push('regenerator-runtime/runtime.js')
-  }
   // Main entry point
   entry[main].push(path.resolve(dirs.src, main))
 
@@ -78,6 +75,7 @@ module.exports = function getBaseConfig(
             ['@babel/plugin-proposal-decorators', { legacy: true }],
             'add-react-static-displayname',
             ['@babel/plugin-proposal-class-properties', { loose: true }],
+            '@babel/plugin-transform-runtime',
           ].filter(_ => _),
         },
       },
