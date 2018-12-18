@@ -13,32 +13,34 @@
     }
   },
   "dependencies": {
-    "@babel/core": "^7.1.5",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-proposal-decorators": "^7.1.2",
-    "@babel/plugin-proposal-export-default-from": "^7.0.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-transform-runtime": "^7.1.0",
-    "@babel/preset-env": "^7.1.5",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/register": "^7.0.0",
-    "@babel/runtime": "^7.1.5",
-    "babel-loader": "^8.0.4",
-    "babel-plugin-add-react-static-displayname": "^0.0.2",
-    "chalk": "^2.4.1",
-    "css-loader": "^1.0.1",
-    "mini-css-extract-plugin": "^0.4.4",
-    "sass-loader": "^7.1.0",
-    "webpack": "^4.25.1",
-    "webpack-bundle-analyzer": "^3.0.3",
-    "webpack-manifest-plugin": "^2.0.4",
-    "webpack-node-externals": "^1.7.2"
+    "chalk": "^2.4.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.8.0",
+    "eslint": "^5.10.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-react": "^7.11.1"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.x.x",
+    "@babel/plugin-proposal-class-properties": "^7.x.x",
+    "@babel/plugin-proposal-decorators": "^7.x.x",
+    "@babel/plugin-proposal-export-default-from": "^7.x.x",
+    "@babel/plugin-proposal-object-rest-spread": "^7.x.x",
+    "@babel/plugin-syntax-dynamic-import": "^7.x.x",
+    "@babel/plugin-transform-runtime": "^7.x.x",
+    "@babel/preset-env": "^7.x.x",
+    "@babel/preset-react": "^7.x.x",
+    "@babel/register": "^7.x.x",
+    "@babel/runtime": "^7.x.x",
+    "babel-loader": "^8.x.x",
+    "babel-plugin-add-react-static-displayname": "^0.x.x",
+    "webpack": "^4.x7x1",
+    "webpack-bundle-analyzer": "^3.x.x",
+    "webpack-manifest-plugin": "^2.x.x",
+    "webpack-node-externals": "^1.x.x",
+    "css-loader": "^2.x.x",
+    "mini-css-extract-plugin": "^0.x.x",
+    "sass-loader": "^7.x.x"
   }
 }
