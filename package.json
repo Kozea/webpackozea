@@ -1,6 +1,6 @@
 {
   "name": "webpackozea",
-  "version": "0.2.20",
+  "version": "0.3.0-alpha",
   "description": "A base webpack configuration",
   "main": "config.js",
   "repository": "https://github.com/Kozea/webpackozea",
@@ -35,12 +35,12 @@
     "@babel/runtime": "^7.x.x",
     "babel-loader": "^8.x.x",
     "babel-plugin-add-react-static-displayname": "^0.x.x",
+    "css-loader": "^2.x.x",
+    "mini-css-extract-plugin": "^0.x.x",
+    "sass-loader": "^7.x.x",
     "webpack": "^4.x7x1",
     "webpack-bundle-analyzer": "^3.x.x",
     "webpack-manifest-plugin": "^2.x.x",
-    "webpack-node-externals": "^1.x.x",
-    "css-loader": "^2.x.x",
-    "mini-css-extract-plugin": "^0.x.x",
-    "sass-loader": "^7.x.x"
+    "webpack-node-externals": "^1.x.x"
   }
 }
