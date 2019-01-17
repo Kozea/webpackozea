@@ -50,6 +50,7 @@ module.exports = function getBaseConfig(
         options: {
           cacheDirectory: true,
           babelrc: false,
+          sourceType: 'unambiguous',
           presets: [
             '@babel/preset-react',
             [
