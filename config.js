@@ -233,10 +233,28 @@ module.exports = function getBaseConfig(
       )
       class ClientDevPlugin {
         apply(compiler) {
+          // Watch fixer
+          const timefix = 11000
+          let watching = {}
+          const aspectWatch = compiler.watch
+          compiler.watch = (...args) => {
+            watching = aspectWatch.apply(compiler, args)
+            return watching
+          }
+          compiler.hooks.watchRun.tapAsync('WebpackozeaWatchFix', (_, cb) => {
+            watching.startTime += timefix
+            cb && cb()
+          })
+          compiler.hooks.done.tapAsync('WebpackozeaWatchFix', (stats, cb) => {
+            stats.startTime -= timefix
+            cb && cb()
+          })
+
           compiler.hooks.done.tap('WebpackozeaClientDevPlugin', stats => {
-            console.log(
-              `  ${chalk.magenta('⚛')} Browser client ready.   ${time(stats)}`
-            )
+            stats.endTime - stats.startTime > 0 &&
+              console.log(
+                `  ${chalk.magenta('⚛')} Browser client ready.   ${time(stats)}`
+              )
           })
         }
       }
