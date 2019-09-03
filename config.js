@@ -114,17 +114,20 @@ module.exports = function getBaseConfig(
     ]
     rules.push({
       test: /\.sass$/i,
-      exclude: /\.useable\.sass$/i,
+      exclude: /\.lazy\.sass$/i,
       use: [debug ? styleLoader : MiniCssExtractPlugin.loader].concat(
         sassToCssLoaders
       ),
     })
     rules.push({
-      test: /\.useable\.sass$/i,
+      test: /\.lazy\.sass$/i,
       use: debug
         ? [
             {
-              loader: 'style-loader/useable',
+              ...styleLoader,
+              options: {
+                injectType: 'lazyStyleTag',
+              },
             },
           ].concat(sassToCssLoaders)
         : 'ignore-loader', // For now it seems better to ignore them
