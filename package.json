@@ -16,10 +16,10 @@
     "chalk": "^2.4.2"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.15.1",
-    "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-react": "^7.12.3"
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-react": "^7.14.3"
   },
   "peerDependencies": {
     "@babel/core": "^7.x.x",
@@ -36,8 +36,9 @@
     "babel-loader": "^8.x.x",
     "babel-plugin-add-react-static-displayname": "^0.x.x",
     "css-loader": "^2.x.x",
+    "dart-sass": "^1.x.x",
     "mini-css-extract-plugin": "^0.x.x",
-    "sass-loader": "^7.x.x",
+    "sass-loader": "^8.x.x",
     "webpack": "^4.x.x",
     "webpack-bundle-analyzer": "^3.x.x",
     "webpack-manifest-plugin": "^2.x.x",

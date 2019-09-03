@@ -7,6 +7,7 @@ const path = require('path')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const chalk = require('chalk')
+const sass = require('sass')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const nodeExternals = require('webpack-node-externals')
 const webpack = require('webpack')
@@ -107,8 +108,10 @@ module.exports = function getBaseConfig(
       {
         loader: 'sass-loader',
         options: {
-          sourceMap: true,
-          includePaths: [dirs.src, dirs.styles, dirs.modules],
+          implementation: sass,
+          sassOptions: {
+            includePaths: [dirs.src, dirs.styles, dirs.modules],
+          },
         },
       },
     ]
