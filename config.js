@@ -417,6 +417,10 @@ module.exports = function getBaseConfig(
     plugins,
   }
 
+  if (debug) {
+    conf.devtool = 'inline-source-map'
+  }
+
   if (server) {
     // Options for node target
     conf.node = {
