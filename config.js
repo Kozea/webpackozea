@@ -12,36 +12,7 @@ const ManifestPlugin = require('webpack-manifest-plugin')
 const nodeExternals = require('webpack-node-externals')
 const webpack = require('webpack')
 
-module.exports = function getBaseConfig(
-  {
-    apiUrl,
-    assetsUrl,
-    cwd,
-    debug,
-    dirs,
-    forcePolyfill,
-    inspect,
-    publicPath,
-    server,
-    serverUrl,
-    staging,
-    verbose,
-  },
-  renderHtml
-) {
-  const main = server ? 'server' : 'client'
-
-  const entry = {}
-  entry[main] = []
-
-  // HMR
-  if (debug && !server) {
-    entry[main].push(`webpack-dev-server/client?${assetsUrl.href}`)
-  }
-  // Main entry point
-  entry[main].push(path.resolve(dirs.src, main))
-
-  // Loading rules
+function setupRules(dirs, server, debug, forcePolyfill, verbose) {
   const rules = [
     {
       test: /\.jsx?$/,
@@ -141,7 +112,13 @@ module.exports = function getBaseConfig(
       use: [styleLoader, cssLoader],
     })
   }
-  // Plugins
+  return rules
+}
+
+function setupPlugins(
+  staging, server, verbose, debug, renderHtml, serverUrl, dirs, inspect,
+  cwd, assetsUrl
+) {
   const plugins = [
     // Common all
     new ManifestPlugin({
@@ -279,6 +256,46 @@ module.exports = function getBaseConfig(
       })
     )
   }
+
+  return plugins
+}
+
+module.exports = function getBaseConfig(
+  {
+    apiUrl,
+    assetsUrl,
+    cwd,
+    debug,
+    dirs,
+    forcePolyfill,
+    inspect,
+    publicPath,
+    server,
+    serverUrl,
+    staging,
+    verbose,
+  },
+  renderHtml
+) {
+  const main = server ? 'server' : 'client'
+
+  const entry = {}
+  entry[main] = []
+
+  // HMR
+  if (debug && !server) {
+    entry[main].push(`webpack-dev-server/client?${assetsUrl.href}`)
+  }
+  // Main entry point
+  entry[main].push(path.resolve(dirs.src, main))
+
+  // Loading rules
+  const rules = setupRules(dirs, server, debug, forcePolyfill, verbose)
+  // Plugins
+  const plugins = setupPlugins(
+    staging, server, verbose, debug, renderHtml, serverUrl, dirs, inspect,
+    cwd, assetsUrl
+  )
 
   const stats = verbose
     ? {
