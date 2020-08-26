@@ -429,7 +429,7 @@ module.exports = function getBaseConfig(
     conf.externals = [
       nodeExternals({
         modulesDir: dirs.modules,
-        whitelist: [/\.css$/],
+        allowlist: [/\.css$/],
       }),
     ]
   }
