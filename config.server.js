@@ -123,8 +123,6 @@ function setupPlugins(staging, debug, serverUrl, dirs, inspect, cwd) {
 }
 
 module.exports = function getBaseConfigServer({
-  apiUrl,
-  assetsUrl,
   cwd,
   debug,
   dirs,
@@ -223,39 +221,6 @@ module.exports = function getBaseConfigServer({
     // Entry points list, allow to load a file with transforms
     module: { rules },
     stats,
-    devServer: {
-      host: assetsUrl.hostname,
-      port: assetsUrl.port,
-      proxy: {
-        '/api': {
-          target: apiUrl.href,
-          logLevel: verbose ? 'debug' : 'warn',
-        },
-        '/static': {
-          target: serverUrl.href,
-          logLevel: verbose ? 'debug' : 'warn',
-        },
-        '/favicon.ico': {
-          target: serverUrl.href,
-          logLevel: verbose ? 'debug' : 'warn',
-        },
-      },
-      disableHostCheck: true,
-      compress: true,
-      noInfo: !verbose,
-      hot: true,
-      overlay: true,
-      historyApiFallback: {
-        index: '/assets/index.html',
-      },
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      watchOptions: {
-        ignored: /node_modules/,
-      },
-      stats,
-    },
     // Webpack plugins
     plugins,
   }
