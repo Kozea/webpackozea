@@ -7,7 +7,6 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const chalk = require('chalk')
 const sass = require('dart-sass')
-const ManifestPlugin = require('webpack-manifest-plugin')
 const webpack = require('webpack')
 
 function setupRules(dirs, debug, forcePolyfill, verbose) {
@@ -46,15 +45,6 @@ function setupRules(dirs, debug, forcePolyfill, verbose) {
             ['@babel/plugin-proposal-class-properties', { loose: true }],
             '@babel/plugin-transform-runtime',
           ].filter(_ => _),
-        },
-      },
-    },
-    {
-      test: /\.(jpe?g|png|gif|svg|ttf|woff|woff2|eot|pdf)$/i,
-      use: {
-        loader: 'url-loader',
-        options: {
-          limit: 2500,
         },
       },
     },
@@ -108,25 +98,12 @@ function setupRules(dirs, debug, forcePolyfill, verbose) {
 
 function setupPlugins(staging, verbose, debug, renderHtml, assetsUrl) {
   const plugins = [
-    // Common all
-    new ManifestPlugin({
-      writeToFileEmit: true,
-    }),
-    // DON'T use JSON stringify and yes it needs multiple quotes
-    // (JSON is imported by babel in a file that use module.exports => X[)
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': `"${process.env.NODE_ENV || 'development'}"`,
-      'process.env.STAGING': `${staging}`,
-    }),
-  ]
-  // Common client
-  plugins.push(
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       openAnalyzer: false,
       logLevel: verbose ? 'info' : 'error',
-    })
-  )
+    }),
+  ]
 
   if (debug) {
     // Client _debug
@@ -208,7 +185,7 @@ function setupPlugins(staging, verbose, debug, renderHtml, assetsUrl) {
   return plugins
 }
 
-module.exports = function getBaseConfigClient(
+module.exports = function getClientConfig(
   {
     apiUrl,
     assetsUrl,
@@ -220,7 +197,8 @@ module.exports = function getBaseConfigClient(
     staging,
     verbose,
   },
-  renderHtml
+  renderHtml,
+  stats
 ) {
   const main = 'client'
 
@@ -239,58 +217,9 @@ module.exports = function getBaseConfigClient(
   // Plugins
   const plugins = setupPlugins(staging, verbose, debug, renderHtml, assetsUrl)
 
-  const stats = verbose
-    ? {
-        entrypoints: true,
-        chunks: true,
-        chunkModules: false,
-        chunkOrigins: true,
-        colors: true,
-        depth: true,
-        usedExports: true,
-        providedExports: true,
-        optimizationBailout: true,
-        errorDetails: true,
-        publicPath: true,
-        performance: true,
-        reasons: true,
-        exclude: () => false,
-        maxModules: Infinity,
-        warnings: true,
-      }
-    : {
-        assets: false,
-        builtAt: false,
-        cached: false,
-        cachedAssets: false,
-        children: false,
-        chunks: false,
-        chunkGroups: false,
-        chunkModules: false,
-        chunkOrigins: false,
-        colors: true,
-        depth: false,
-        entrypoints: false,
-        env: false,
-        errors: true,
-        errorDetails: true,
-        hash: false,
-        modules: false,
-        moduleTrace: false,
-        performance: false,
-        providedExports: false,
-        publicPath: false,
-        reasons: false,
-        source: false,
-        timings: false,
-        usedExports: false,
-        version: false,
-        warnings: false,
-      }
   const filename = debug ? '[name].js' : '[name].[chunkhash].js'
 
   const conf = {
-    mode: debug ? 'development' : 'production',
     entry,
     // Defines the output file for the html script tag
     output: {
@@ -312,14 +241,8 @@ module.exports = function getBaseConfigClient(
     performance: {
       hints: debug ? false : 'warning',
     },
-
-    resolve: {
-      extensions: ['.mjs', '.js', '.jsx'],
-    },
-
     // Entry points list, allow to load a file with transforms
     module: { rules },
-    stats,
     devServer: {
       host: assetsUrl.hostname,
       port: assetsUrl.port,
@@ -355,10 +278,6 @@ module.exports = function getBaseConfigClient(
     },
     // Webpack plugins
     plugins,
-  }
-
-  if (debug) {
-    conf.devtool = 'inline-source-map'
   }
 
   return conf

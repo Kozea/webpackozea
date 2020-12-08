@@ -43,15 +43,6 @@ function setupRules(dirs, verbose) {
         },
       },
     },
-    {
-      test: /\.(jpe?g|png|gif|svg|ttf|woff|woff2|eot|pdf)$/i,
-      use: {
-        loader: 'url-loader',
-        options: {
-          limit: 2500,
-        },
-      },
-    },
   ]
   rules.push({ test: /\.(css|sass)$/, use: 'ignore-loader' })
   return rules
@@ -122,7 +113,7 @@ function setupPlugins(staging, debug, serverUrl, dirs, inspect, cwd) {
   return plugins
 }
 
-module.exports = function getBaseConfigServer({
+module.exports = function getServerConfig({
   cwd,
   debug,
   dirs,
@@ -145,58 +136,9 @@ module.exports = function getBaseConfigServer({
   // Plugins
   const plugins = setupPlugins(staging, debug, serverUrl, dirs, inspect, cwd)
 
-  const stats = verbose
-    ? {
-        entrypoints: true,
-        chunks: true,
-        chunkModules: false,
-        chunkOrigins: true,
-        colors: true,
-        depth: true,
-        usedExports: true,
-        providedExports: true,
-        optimizationBailout: true,
-        errorDetails: true,
-        publicPath: true,
-        performance: true,
-        reasons: true,
-        exclude: () => false,
-        maxModules: Infinity,
-        warnings: true,
-      }
-    : {
-        assets: false,
-        builtAt: false,
-        cached: false,
-        cachedAssets: false,
-        children: false,
-        chunks: false,
-        chunkGroups: false,
-        chunkModules: false,
-        chunkOrigins: false,
-        colors: true,
-        depth: false,
-        entrypoints: false,
-        env: false,
-        errors: true,
-        errorDetails: true,
-        hash: false,
-        modules: false,
-        moduleTrace: false,
-        performance: false,
-        providedExports: false,
-        publicPath: false,
-        reasons: false,
-        source: false,
-        timings: false,
-        usedExports: false,
-        version: false,
-        warnings: false,
-      }
   const filename = '[name].js'
 
   const conf = {
-    mode: debug ? 'development' : 'production',
     entry,
     // Defines the output file for the html script tag
     output: {
@@ -214,31 +156,20 @@ module.exports = function getBaseConfigServer({
       hints: false,
     },
 
-    resolve: {
-      extensions: ['.mjs', '.js', '.jsx'],
-    },
-
     // Entry points list, allow to load a file with transforms
     module: { rules },
-    stats,
     // Webpack plugins
     plugins,
+    node: {
+      __dirname: true,
+    },
+    externals: [
+      nodeExternals({
+        modulesDir: dirs.modules,
+        allowlist: [/\.css$/],
+      }),
+    ],
   }
-
-  if (debug) {
-    conf.devtool = 'inline-source-map'
-  }
-
-  // Options for node target
-  conf.node = {
-    __dirname: true,
-  }
-  conf.externals = [
-    nodeExternals({
-      modulesDir: dirs.modules,
-      allowlist: [/\.css$/],
-    }),
-  ]
 
   return conf
 }
