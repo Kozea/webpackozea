@@ -5,9 +5,7 @@ const childProcess = require('child_process')
 const path = require('path')
 
 const chalk = require('chalk')
-const ManifestPlugin = require('webpack-manifest-plugin')
 const nodeExternals = require('webpack-node-externals')
-const webpack = require('webpack')
 
 function setupRules(dirs, verbose) {
   const rules = [
@@ -49,18 +47,7 @@ function setupRules(dirs, verbose) {
 }
 
 function setupPlugins(staging, debug, serverUrl, dirs, inspect, cwd) {
-  const plugins = [
-    // Common all
-    new ManifestPlugin({
-      writeToFileEmit: true,
-    }),
-    // DON'T use JSON stringify and yes it needs multiple quotes
-    // (JSON is imported by babel in a file that use module.exports => X[)
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': `"${process.env.NODE_ENV || 'development'}"`,
-      'process.env.STAGING': `${staging}`,
-    }),
-  ]
+  const plugins = []
 
   if (debug) {
     const time = stats => {

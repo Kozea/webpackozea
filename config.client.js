@@ -96,7 +96,7 @@ function setupRules(dirs, debug, forcePolyfill, verbose) {
   return rules
 }
 
-function setupPlugins(staging, verbose, debug, renderHtml, assetsUrl) {
+function setupPlugins(verbose, debug, renderHtml, assetsUrl) {
   const plugins = [
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
@@ -194,7 +194,6 @@ module.exports = function getClientConfig(
     forcePolyfill,
     publicPath,
     serverUrl,
-    staging,
     verbose,
   },
   renderHtml,
@@ -215,7 +214,7 @@ module.exports = function getClientConfig(
   // Loading rules
   const rules = setupRules(dirs, debug, forcePolyfill, verbose)
   // Plugins
-  const plugins = setupPlugins(staging, verbose, debug, renderHtml, assetsUrl)
+  const plugins = setupPlugins(verbose, debug, renderHtml, assetsUrl)
 
   const filename = debug ? '[name].js' : '[name].[chunkhash].js'
 
