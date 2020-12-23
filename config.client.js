@@ -10,7 +10,7 @@ const sass = require('dart-sass')
 const webpack = require('webpack')
 
 function setupRules(dirs, debug, forcePolyfill, verbose) {
-  const rules = [
+  return [
     {
       test: /\.jsx?$/,
       include: dirs.src,
@@ -48,52 +48,53 @@ function setupRules(dirs, debug, forcePolyfill, verbose) {
         },
       },
     },
-  ]
-
-  // Sass -> Css
-  const styleLoader = { loader: 'style-loader' }
-  const cssLoader = {
-    loader: 'css-loader',
-    options: { sourceMap: debug },
-  }
-  const sassToCssLoaders = [
-    cssLoader,
+    // STYLES LOADER
     {
-      loader: 'sass-loader',
-      options: {
-        implementation: sass,
-        sassOptions: {
-          includePaths: [dirs.src, dirs.styles, dirs.modules],
+      test: /.(css|sass|scss)$/i,
+      use: [
+        debug ? 'style-loader' : MiniCssExtractPlugin.loader,
+        {
+          loader: 'css-loader',
+          options: { sourceMap: debug },
         },
-      },
-    },
-  ]
-  rules.push({
-    test: /\.sass$/i,
-    exclude: /\.lazy\.sass$/i,
-    use: [debug ? styleLoader : MiniCssExtractPlugin.loader].concat(
-      sassToCssLoaders
-    ),
-  })
-  rules.push({
-    test: /\.lazy\.sass$/i,
-    use: debug
-      ? [
-          {
-            ...styleLoader,
-            options: {
-              injectType: 'lazyStyleTag',
+        {
+          loader: 'sass-loader',
+          options: {
+            implementation: sass,
+            sassOptions: {
+              includePaths: [dirs.src, dirs.styles, dirs.modules],
             },
           },
-        ].concat(sassToCssLoaders)
-      : 'ignore-loader', // For now it seems better to ignore them
-  })
-  // Css for deps
-  rules.push({
-    test: /\.css$/i,
-    use: [styleLoader, cssLoader],
-  })
-  return rules
+        },
+      ],
+    },
+    {
+      test: /\.lazy\.sass$/i,
+      use: debug
+        ? [
+            {
+              loader: 'style-loader',
+              options: {
+                injectType: 'lazyStyleTag',
+              },
+            },
+            {
+              loader: 'css-loader',
+              options: { sourceMap: debug },
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                implementation: sass,
+                sassOptions: {
+                  includePaths: [dirs.src, dirs.styles, dirs.modules],
+                },
+              },
+            },
+          ]
+        : 'ignore-loader', // For now it seems better to ignore them
+    },
+  ]
 }
 
 function setupPlugins(verbose, debug, renderHtml, assetsUrl) {
