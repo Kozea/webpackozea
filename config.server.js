@@ -8,7 +8,7 @@ const chalk = require('chalk')
 const nodeExternals = require('webpack-node-externals')
 
 function setupRules(dirs, verbose) {
-  const rules = [
+  return [
     {
       test: /\.jsx?$/,
       include: dirs.src,
@@ -41,63 +41,57 @@ function setupRules(dirs, verbose) {
         },
       },
     },
+    { test: /\.(css|sass)$/, use: 'ignore-loader' },
   ]
-  rules.push({ test: /\.(css|sass)$/, use: 'ignore-loader' })
-  return rules
 }
 
 function setupPlugins(debug, serverUrl, dirs, inspect, cwd) {
-  const plugins = []
-
-  if (debug) {
-    const time = stats => {
-      let t = stats.endTime - stats.startTime
-      let unit = 'ms'
-      if (t > 60000) {
-        t /= 60000
-        unit = 'm'
-      } else if (t > 1000) {
-        t /= 1000
-        unit = 's'
-      }
-      return `${chalk.yellow('⚙')} ${chalk.white(t)}${chalk.gray(unit)}`
+  if (!debug) {
+    return []
+  }
+  const time = stats => {
+    let t = stats.endTime - stats.startTime
+    let unit = 'ms'
+    if (t > 60000) {
+      t /= 60000
+      unit = 'm'
+    } else if (t > 1000) {
+      t /= 1000
+      unit = 's'
     }
-    // Server debug
-    // Start and restart server
-    console.log(
-      `  ${chalk.magenta('⯂')} Node koaze server: ${chalk.blue(serverUrl.href)}`
-    )
-    class ServerDevPlugin {
-      apply(compiler) {
-        compiler.hooks.done.tap('WebpackozeaServerDevPlugin', stats => {
-          if (this.server) {
-            // eslint-disable-next-line
-            console.log(
-              `  ${chalk.cyan('↻')} Restarting node server. ${time(stats)}`
-            )
-            this.server.kill()
-          } else {
-            // eslint-disable-next-line
-            console.log(
-              `  ${chalk.green('⏻')} Starting node server.   ${time(stats)}`
-            )
-          }
-
-          this.server = childProcess.fork(
-            path.resolve(dirs.dist, 'server.js'),
-            {
-              cwd,
-              silent: false,
-              execArgv: inspect ? ['--inspect'] : [],
-            }
+    return `${chalk.yellow('⚙')} ${chalk.white(t)}${chalk.gray(unit)}`
+  }
+  // Server debug
+  // Start and restart server
+  console.log(
+    `  ${chalk.magenta('⯂')} Node koaze server: ${chalk.blue(serverUrl.href)}`
+  )
+  class ServerDevPlugin {
+    apply(compiler) {
+      compiler.hooks.done.tap('WebpackozeaServerDevPlugin', stats => {
+        if (this.server) {
+          // eslint-disable-next-line
+          console.log(
+            `  ${chalk.cyan('↻')} Restarting node server. ${time(stats)}`
           )
+          this.server.kill()
+        } else {
+          // eslint-disable-next-line
+          console.log(
+            `  ${chalk.green('⏻')} Starting node server.   ${time(stats)}`
+          )
+        }
+
+        this.server = childProcess.fork(path.resolve(dirs.dist, 'server.js'), {
+          cwd,
+          silent: false,
+          execArgv: inspect ? ['--inspect'] : [],
         })
-      }
+      })
     }
-    plugins.push(new ServerDevPlugin())
   }
 
-  return plugins
+  return [new ServerDevPlugin()]
 }
 
 module.exports = function getServerConfig({

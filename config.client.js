@@ -120,9 +120,7 @@ function setupPlugins(verbose, debug, renderHtml, assetsUrl) {
       }
     }
     renderHtml && plugins.push(new HtmlPlugin())
-  }
 
-  if (debug) {
     const time = stats => {
       let t = stats.endTime - stats.startTime
       let unit = 'ms'
