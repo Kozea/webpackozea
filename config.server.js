@@ -46,7 +46,7 @@ function setupRules(dirs, verbose) {
   return rules
 }
 
-function setupPlugins(staging, debug, serverUrl, dirs, inspect, cwd) {
+function setupPlugins(debug, serverUrl, dirs, inspect, cwd) {
   const plugins = []
 
   if (debug) {
@@ -107,7 +107,6 @@ module.exports = function getServerConfig({
   inspect,
   publicPath,
   serverUrl,
-  staging,
   verbose,
 }) {
   const main = 'server'
@@ -121,7 +120,7 @@ module.exports = function getServerConfig({
   // Loading rules
   const rules = setupRules(dirs, verbose)
   // Plugins
-  const plugins = setupPlugins(staging, debug, serverUrl, dirs, inspect, cwd)
+  const plugins = setupPlugins(debug, serverUrl, dirs, inspect, cwd)
 
   const filename = '[name].js'
 
