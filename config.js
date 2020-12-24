@@ -1,4 +1,4 @@
-const ManifestPlugin = require('webpack-manifest-plugin')
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 const webpack = require('webpack')
 const { merge } = require('webpack-merge')
 
@@ -64,13 +64,12 @@ function getCommonConfig({ verbose, debug, staging }) {
     module: {
       rules: [
         {
-          test: /\.(jpe?g|png|gif|svg|ttf|woff|woff2|eot|pdf)$/i,
-          use: {
-            loader: 'url-loader',
-            options: {
-              limit: 2500,
-            },
-          },
+          test: /\.(jpg|jpeg|png|gif|pdf)$/i,
+          type: 'asset/resource',
+        },
+        {
+          test: /\.(woff|woff2|svg|ttf|eot|otf)$/i,
+          type: 'asset/inline',
         },
       ],
     },
@@ -80,7 +79,7 @@ function getCommonConfig({ verbose, debug, staging }) {
     },
     plugins: [
       // Common all
-      new ManifestPlugin({
+      new WebpackManifestPlugin({
         writeToFileEmit: true,
       }),
       // DON'T use JSON stringify and yes it needs multiple quotes
@@ -100,14 +99,15 @@ function getBaseConfigClient(config, renderHtml) {
     renderHtml,
     getStats(config.verbose)
   )
-
-  return merge(commonCfg, clientCfg)
+  const conf = merge(commonCfg, clientCfg)
+  return conf
 }
 
 function getBaseConfigServer(config) {
   const commonCfg = getCommonConfig(config)
   const serverCfg = getServerConfig(config)
-  return merge(commonCfg, serverCfg)
+  const conf = merge(commonCfg, serverCfg)
+  return conf
 }
 
 module.exports = {

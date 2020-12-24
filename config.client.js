@@ -5,12 +5,14 @@ const path = require('path')
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const chalk = require('chalk')
 const sass = require('dart-sass')
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 
 function setupRules(dirs, debug, forcePolyfill, verbose) {
   return [
+    // JS LOADER
     {
       test: /\.jsx?$/,
       include: dirs.src,
@@ -44,7 +46,7 @@ function setupRules(dirs, debug, forcePolyfill, verbose) {
             'add-react-static-displayname',
             ['@babel/plugin-proposal-class-properties', { loose: true }],
             '@babel/plugin-transform-runtime',
-          ].filter(_ => _),
+          ],
         },
       },
     },
@@ -94,10 +96,23 @@ function setupRules(dirs, debug, forcePolyfill, verbose) {
           ]
         : 'ignore-loader', // For now it seems better to ignore them
     },
+    // provide polyfill for vfile (ex: used in react-markdown)
+    {
+      test: /node_modules\/vfile\/core\.js/,
+      use: [
+        {
+          loader: 'imports-loader',
+          options: {
+            type: 'commonjs',
+            imports: ['single process/browser process'],
+          },
+        },
+      ],
+    },
   ]
 }
 
-function setupPlugins(verbose, debug, renderHtml, assetsUrl) {
+function setupPlugins(verbose, debug, renderHtml) {
   const plugins = [
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
@@ -107,76 +122,26 @@ function setupPlugins(verbose, debug, renderHtml, assetsUrl) {
   ]
 
   if (debug) {
-    // Client _debug
-    plugins.push(new webpack.HotModuleReplacementPlugin())
-    class HtmlPlugin {
-      apply(compiler) {
-        compiler.hooks.emit.tap('WebpackozeaHtmlPlugin', compilation => {
-          const html = renderHtml()
-          compilation.assets['index.html'] = {
-            size: () => html.length,
-            source: () => html,
-          }
-        })
-      }
-    }
-    renderHtml && plugins.push(new HtmlPlugin())
-
-    const time = stats => {
-      let t = stats.endTime - stats.startTime
-      let unit = 'ms'
-      if (t > 60000) {
-        t /= 60000
-        unit = 'm'
-      } else if (t > 1000) {
-        t /= 1000
-        unit = 's'
-      }
-      return `${chalk.yellow('⚙')} ${chalk.white(t)}${chalk.gray(unit)}`
-    }
-    console.log(
-      `  ${chalk.magenta('⯃')} Development web server: ${chalk.blue(
-        assetsUrl.href
-      )}`
+    // Client debug
+    plugins.push(
+      new webpack.HotModuleReplacementPlugin(),
+      new HtmlWebpackPlugin({
+        templateContent: renderHtml(),
+        filename: 'index.html',
+        alwaysWriteToDisk: true,
+      }),
+      // HtmlWebpackHarddiskPlugin is an extension for HtmlWebpackPlugin
+      // It allows the use of 'alwaysWriteToDisk' option
+      new HtmlWebpackHarddiskPlugin()
     )
-    class ClientDevPlugin {
-      apply(compiler) {
-        // Watch fixer
-        const timefix = 11000
-        let watching = {}
-        const aspectWatch = compiler.watch
-        compiler.watch = (...args) => {
-          watching = aspectWatch.apply(compiler, args)
-          return watching
-        }
-        compiler.hooks.watchRun.tapAsync('WebpackozeaWatchFix', (_, cb) => {
-          watching.startTime += timefix
-          cb && cb()
-        })
-        compiler.hooks.done.tapAsync('WebpackozeaWatchFix', (stats, cb) => {
-          stats.startTime -= timefix
-          cb && cb()
-        })
-
-        compiler.hooks.done.tap('WebpackozeaClientDevPlugin', stats => {
-          stats.endTime - stats.startTime > 0 &&
-            console.log(
-              `  ${chalk.magenta('⚛')} Browser client ready.   ${time(stats)}`
-            )
-        })
-      }
-    }
-    plugins.push(new ClientDevPlugin())
-  }
-
-  if (!debug) {
+  } else {
     // Client prod
     plugins.push(
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // both options are optional
-        filename: '[name].[chunkhash].css',
-        chunkFilename: '[name].[chunkhash].css',
+        filename: '[name].[contenthash].css',
+        chunkFilename: '[name].[contenthash].css',
       })
     )
   }
@@ -184,7 +149,7 @@ function setupPlugins(verbose, debug, renderHtml, assetsUrl) {
   return plugins
 }
 
-module.exports = function getClientConfig(
+module.exports = function getBaseConfigClient(
   {
     apiUrl,
     assetsUrl,
@@ -199,51 +164,61 @@ module.exports = function getClientConfig(
   stats
 ) {
   const main = 'client'
-
   const entry = {}
   entry[main] = []
 
-  // HMR
-  if (debug) {
-    entry[main].push(`webpack-dev-server/client?${assetsUrl.href}`)
-  }
   // Main entry point
   entry[main].push(path.resolve(dirs.src, main))
-
   // Loading rules
   const rules = setupRules(dirs, debug, forcePolyfill, verbose)
   // Plugins
-  const plugins = setupPlugins(verbose, debug, renderHtml, assetsUrl)
+  const plugins = setupPlugins(verbose, debug, renderHtml)
 
-  const filename = debug ? '[name].js' : '[name].[chunkhash].js'
+  const filename = debug ? '[name].js' : '[name].[contenthash].js'
 
-  const conf = {
+  return {
+    mode: debug ? 'development' : 'production',
     entry,
-    // Defines the output file for the html script tag
     output: {
       path: dirs.assets,
       filename,
-      // We might need to remove [name] here for long time cache
       chunkFilename: filename,
       publicPath,
       libraryTarget: void 0,
+      assetModuleFilename: '[hash][ext][query]',
     },
     watch: void 0,
     target: 'web',
     optimization: {
-      runtimeChunk: true,
+      moduleIds: 'deterministic',
+      runtimeChunk: 'single',
       splitChunks: {
-        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+        },
       },
     },
     performance: {
       hints: debug ? false : 'warning',
     },
-    // Entry points list, allow to load a file with transforms
+    resolve: {
+      extensions: ['.mjs', '.js', '.jsx'],
+      // provide polyfill for path
+      fallback: {
+        path: require.resolve('path-browserify'),
+      },
+    },
     module: { rules },
+    stats,
     devServer: {
       host: assetsUrl.hostname,
       port: assetsUrl.port,
+      contentBase: dirs.assets,
+      publicPath,
       proxy: {
         '/api': {
           target: apiUrl.href,
@@ -274,9 +249,6 @@ module.exports = function getClientConfig(
       },
       stats,
     },
-    // Webpack plugins
     plugins,
   }
-
-  return conf
 }

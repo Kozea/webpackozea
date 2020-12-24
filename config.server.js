@@ -37,7 +37,7 @@ function setupRules(dirs, verbose) {
             'add-react-static-displayname',
             ['@babel/plugin-proposal-class-properties', { loose: true }],
             '@babel/plugin-transform-runtime',
-          ].filter(_ => _),
+          ],
         },
       },
     },
@@ -49,6 +49,7 @@ function setupPlugins(debug, serverUrl, dirs, inspect, cwd) {
   if (!debug) {
     return []
   }
+
   const time = stats => {
     let t = stats.endTime - stats.startTime
     let unit = 'ms'
@@ -90,11 +91,10 @@ function setupPlugins(debug, serverUrl, dirs, inspect, cwd) {
       })
     }
   }
-
   return [new ServerDevPlugin()]
 }
 
-module.exports = function getServerConfig({
+module.exports = function getBaseConfigServer({
   cwd,
   debug,
   dirs,
@@ -104,27 +104,24 @@ module.exports = function getServerConfig({
   verbose,
 }) {
   const main = 'server'
-
   const entry = {}
   entry[main] = []
 
   // Main entry point
   entry[main].push(path.resolve(dirs.src, main))
-
   // Loading rules
   const rules = setupRules(dirs, verbose)
   // Plugins
   const plugins = setupPlugins(debug, serverUrl, dirs, inspect, cwd)
-
+  // We might need to remove [name] here for long time cache
   const filename = '[name].js'
 
   const conf = {
+    mode: debug ? 'development' : 'production',
     entry,
-    // Defines the output file for the html script tag
     output: {
       path: dirs.dist,
       filename,
-      // We might need to remove [name] here for long time cache
       chunkFilename: filename,
       publicPath,
       libraryTarget: 'commonjs2',
@@ -135,10 +132,10 @@ module.exports = function getServerConfig({
     performance: {
       hints: false,
     },
-
-    // Entry points list, allow to load a file with transforms
+    resolve: {
+      extensions: ['.mjs', '.js', '.jsx'],
+    },
     module: { rules },
-    // Webpack plugins
     plugins,
     node: {
       __dirname: true,
