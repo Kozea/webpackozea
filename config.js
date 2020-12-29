@@ -24,8 +24,10 @@ function getStats(verbose) {
         exclude: () => false,
         maxModules: Infinity,
         warnings: true,
+        logging: 'info',
       }
     : {
+        logging: 'none',
         assets: false,
         builtAt: false,
         cached: false,

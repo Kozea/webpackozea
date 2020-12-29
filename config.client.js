@@ -9,6 +9,7 @@ const sass = require('dart-sass')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
+const chalk = require('chalk')
 
 function setupRules(dirs, debug, forcePolyfill, verbose) {
   return [
@@ -112,7 +113,7 @@ function setupRules(dirs, debug, forcePolyfill, verbose) {
   ]
 }
 
-function setupPlugins(verbose, debug, renderHtml) {
+function setupPlugins(verbose, debug, renderHtml, assetsUrl) {
   const plugins = [
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
@@ -122,6 +123,23 @@ function setupPlugins(verbose, debug, renderHtml) {
   ]
 
   if (debug) {
+    const PLUGIN_NAME = 'client-dev-plugin'
+    class ClientDevPlugin {
+      apply(compiler) {
+        /* Alternative to console -> Logger interface
+        const logger = compiler.getInfrastructureLogger(PLUGIN_NAME)
+        logger.info('Hello from the logger') */
+
+        compiler.hooks.done.tap(PLUGIN_NAME, () => {
+          console.log(`  ${chalk.magenta('⚛')} Browser client ready.`)
+          console.log(
+            `  ${chalk.magenta('✨')} Project is running at: ${chalk.blue(
+              assetsUrl.href
+            )}`
+          )
+        })
+      }
+    }
     // Client debug
     plugins.push(
       new webpack.HotModuleReplacementPlugin(),
@@ -132,7 +150,8 @@ function setupPlugins(verbose, debug, renderHtml) {
       }),
       // HtmlWebpackHarddiskPlugin is an extension for HtmlWebpackPlugin
       // It allows the use of 'alwaysWriteToDisk' option
-      new HtmlWebpackHarddiskPlugin()
+      new HtmlWebpackHarddiskPlugin(),
+      new ClientDevPlugin()
     )
   } else {
     // Client prod
@@ -172,7 +191,7 @@ module.exports = function getBaseConfigClient(
   // Loading rules
   const rules = setupRules(dirs, debug, forcePolyfill, verbose)
   // Plugins
-  const plugins = setupPlugins(verbose, debug, renderHtml)
+  const plugins = setupPlugins(verbose, debug, renderHtml, assetsUrl)
 
   const filename = debug ? '[name].js' : '[name].[contenthash].js'
 
