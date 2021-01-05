@@ -11,12 +11,25 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const chalk = require('chalk')
 
-function setupRules(dirs, debug, forcePolyfill, verbose) {
+function setupRules(
+  dirs,
+  debug,
+  forcePolyfill,
+  verbose,
+  additionalIncludes = []
+) {
   return [
     // JS LOADER
     {
       test: /\.jsx?$/,
-      include: dirs.src,
+      include: additionalIncludes.length
+        ? [
+            ...additionalIncludes.map(module =>
+              path.join(dirs.modules, module)
+            ),
+            dirs.src,
+          ]
+        : dirs.src,
       use: {
         loader: 'babel-loader',
         options: {
@@ -178,6 +191,7 @@ module.exports = function getBaseConfigClient(
     publicPath,
     serverUrl,
     verbose,
+    additionalIncludes,
   },
   renderHtml,
   stats
@@ -189,7 +203,13 @@ module.exports = function getBaseConfigClient(
   // Main entry point
   entry[main].push(path.resolve(dirs.src, main))
   // Loading rules
-  const rules = setupRules(dirs, debug, forcePolyfill, verbose)
+  const rules = setupRules(
+    dirs,
+    debug,
+    forcePolyfill,
+    verbose,
+    additionalIncludes
+  )
   // Plugins
   const plugins = setupPlugins(verbose, debug, renderHtml, assetsUrl)
 
