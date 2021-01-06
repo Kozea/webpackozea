@@ -36,7 +36,7 @@
     "babel-loader": "^8.x.x",
     "babel-plugin-add-react-static-displayname": "^0.x.x",
     "css-loader": "^5.x.x",
-    "dart-sass": "^1.x.x",
+    "sass": "^1.x.x",
     "html-webpack-harddisk-plugin": "^1.x.x",
     "html-webpack-plugin": "^4.x.x",
     "imports-loader": "^1.x.x",

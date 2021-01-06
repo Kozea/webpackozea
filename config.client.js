@@ -5,7 +5,6 @@ const path = require('path')
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const sass = require('dart-sass')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
@@ -76,7 +75,6 @@ function setupRules(
         {
           loader: 'sass-loader',
           options: {
-            implementation: sass,
             sassOptions: {
               includePaths: [dirs.src, dirs.styles, dirs.modules],
             },
@@ -101,7 +99,6 @@ function setupRules(
             {
               loader: 'sass-loader',
               options: {
-                implementation: sass,
                 sassOptions: {
                   includePaths: [dirs.src, dirs.styles, dirs.modules],
                 },
