@@ -19,8 +19,7 @@
     "babel-eslint": "^10.0.3",
     "eslint": "^7.2.0",
     "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-react": "^7.14.3",
-    "install-peers": "^1.0.3"
+    "eslint-plugin-react": "^7.14.3"
   },
   "peerDependencies": {
     "@babel/core": "^7.x.x",
