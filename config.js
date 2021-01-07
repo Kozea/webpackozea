@@ -22,7 +22,6 @@ function getStats(verbose) {
         performance: true,
         reasons: true,
         exclude: () => false,
-        maxModules: Infinity,
         warnings: true,
         logging: 'info',
       }
