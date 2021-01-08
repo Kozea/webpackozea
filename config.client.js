@@ -124,7 +124,13 @@ function setupRules(
   ]
 }
 
-function setupPlugins(verbose, debug, renderHtml, assetsUrl) {
+function setupPlugins(
+  verbose,
+  debug,
+  renderHtml,
+  assetsUrl,
+  additionalPlugins = []
+) {
   const plugins = [
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
@@ -176,6 +182,8 @@ function setupPlugins(verbose, debug, renderHtml, assetsUrl) {
     )
   }
 
+  additionalPlugins.length && plugins.push(...additionalPlugins)
+
   return plugins
 }
 
@@ -191,6 +199,7 @@ module.exports = function getBaseConfigClient(
     verbose,
     additionalIncludes,
     additionalEntries,
+    additionalPlugins,
   },
   renderHtml,
   stats
@@ -214,7 +223,13 @@ module.exports = function getBaseConfigClient(
     additionalIncludes
   )
   // Plugins
-  const plugins = setupPlugins(verbose, debug, renderHtml, assetsUrl)
+  const plugins = setupPlugins(
+    verbose,
+    debug,
+    renderHtml,
+    assetsUrl,
+    additionalPlugins
+  )
 
   const filename = debug ? '[name].js' : '[name].[contenthash].js'
 
