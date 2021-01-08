@@ -190,16 +190,21 @@ module.exports = function getBaseConfigClient(
     serverUrl,
     verbose,
     additionalIncludes,
+    additionalEntries,
   },
   renderHtml,
   stats
 ) {
   const main = 'client'
-  const entry = {}
-  entry[main] = []
+  const entry = additionalEntries
+    ? {
+        [main]: [path.resolve(dirs.src, main)],
+        ...additionalEntries,
+      }
+    : {
+        [main]: [path.resolve(dirs.src, main)],
+      }
 
-  // Main entry point
-  entry[main].push(path.resolve(dirs.src, main))
   // Loading rules
   const rules = setupRules(
     dirs,
