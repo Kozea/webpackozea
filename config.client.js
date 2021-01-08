@@ -66,6 +66,7 @@ function setupRules(
     // STYLES LOADER
     {
       test: /.(css|sass|scss)$/i,
+      exclude: /\.lazy\.sass$/i,
       use: [
         debug ? 'style-loader' : MiniCssExtractPlugin.loader,
         {
