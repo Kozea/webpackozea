@@ -261,6 +261,8 @@ module.exports = function getBaseConfigClient(
     },
     performance: {
       hints: debug ? false : 'warning',
+      maxEntrypointSize: 5120000,
+      maxAssetSize: 5120000,
     },
     resolve: {
       extensions: ['.mjs', '.js', '.jsx'],
