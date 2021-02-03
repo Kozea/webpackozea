@@ -252,7 +252,8 @@ module.exports = function getBaseConfigClient(
       splitChunks: {
         cacheGroups: {
           vendor: {
-            test: /[\\/]node_modules[\\/]/,
+            // to benefit from the dynamic imports in formol
+            test: /[\\/]node_modules[\\/](?!(formol)[\\/]).*/,
             name: 'vendors',
             chunks: 'all',
           },
