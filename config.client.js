@@ -247,15 +247,14 @@ module.exports = function getBaseConfigClient(
     watch: void 0,
     target: 'web',
     optimization: {
-      moduleIds: 'deterministic',
-      runtimeChunk: 'single',
+      runtimeChunk: true,
       splitChunks: {
         cacheGroups: {
-          vendor: {
-            // to benefit from the dynamic imports in formol
-            test: /[\\/]node_modules[\\/](?!(formol)[\\/]).*/,
+          defaultVendors: {
+            test: /[\\/]node_modules[\\/]/,
             name: 'vendors',
-            chunks: 'all',
+            chunks: 'initial',
+            reuseExistingChunk: true,
           },
         },
       },
