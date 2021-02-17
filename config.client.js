@@ -247,7 +247,9 @@ module.exports = function getBaseConfigClient(
     watch: void 0,
     target: 'web',
     optimization: {
-      runtimeChunk: true,
+      runtimeChunk: {
+        name: 'runtime',
+      },
       splitChunks: {
         cacheGroups: {
           defaultVendors: {
