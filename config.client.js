@@ -20,6 +20,16 @@ function setupRules(
   return [
     // JS LOADER
     {
+      /*
+      - To solve this issue
+        https://github.com/webpack/webpack/issues/11467#issuecomment-691873586
+      */
+      test: /\.(mjs|js)$/,
+      resolve: {
+        fullySpecified: false,
+      },
+    },
+    {
       test: /\.jsx?$/,
       include: additionalIncludes.length
         ? [
