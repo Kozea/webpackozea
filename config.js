@@ -1,6 +1,7 @@
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 const webpack = require('webpack')
 const { merge } = require('webpack-merge')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
 const getServerConfig = require('./config.server')
 const getClientConfig = require('./config.client')
@@ -65,6 +66,17 @@ function getCommonConfig({ verbose, debug, staging }) {
     module: {
       rules: [
         {
+          test: /\.tsx?$/,
+          exclude: /node_modules/,
+          loader: 'ts-loader',
+          options: {
+            // disable type checking
+            // it will be performed in separate process
+            // thanks to 'fork-ts-checker-webpack-plugin'
+            transpileOnly: true,
+          },
+        },
+        {
           test: /\.(jpg|jpeg|png|gif|pdf)$/i,
           type: 'asset/resource',
         },
@@ -76,7 +88,7 @@ function getCommonConfig({ verbose, debug, staging }) {
     },
     stats: getStats(verbose),
     resolve: {
-      extensions: ['.mjs', '.js', '.jsx'],
+      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx'],
     },
     plugins: [
       // Common all
@@ -89,6 +101,7 @@ function getCommonConfig({ verbose, debug, staging }) {
         'process.env.NODE_ENV': `"${process.env.NODE_ENV || 'development'}"`,
         'process.env.STAGING': `${!!staging}`,
       }),
+      new ForkTsCheckerWebpackPlugin(),
     ],
   }
 }
