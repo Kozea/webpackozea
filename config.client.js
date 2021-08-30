@@ -69,6 +69,10 @@ function setupRules(
             'add-react-static-displayname',
             ['@babel/plugin-proposal-class-properties', { loose: true }],
             ['@babel/plugin-proposal-private-methods', { loose: true }],
+            [
+              '@babel/plugin-proposal-private-property-in-object',
+              { loose: true },
+            ],
             '@babel/plugin-transform-runtime',
           ],
         },
@@ -247,6 +251,9 @@ module.exports = function getBaseConfigClient(
   return {
     mode: debug ? 'development' : 'production',
     entry,
+    infrastructureLogging: {
+      level: verbose ? 'verbose' : 'none',
+    },
     output: {
       path: dirs.assets,
       filename,
@@ -287,10 +294,12 @@ module.exports = function getBaseConfigClient(
     module: { rules },
     stats,
     devServer: {
+      allowedHosts: 'all',
+      devMiddleware: {
+        publicPath,
+      },
       host: assetsUrl.hostname,
       port: assetsUrl.port,
-      contentBase: dirs.assets,
-      publicPath,
       proxy: {
         '/api': {
           target: apiUrl.href,
@@ -305,21 +314,18 @@ module.exports = function getBaseConfigClient(
           logLevel: verbose ? 'debug' : 'warn',
         },
       },
-      disableHostCheck: true,
       compress: true,
-      noInfo: !verbose,
       hot: true,
-      overlay: true,
       historyApiFallback: {
         index: '/assets/index.html',
       },
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
-      watchOptions: {
-        ignored: /node_modules/,
+      static: {
+        directory: dirs.assets,
+        watch: true,
       },
-      stats,
     },
     plugins,
   }
