@@ -62,7 +62,7 @@ function getStats(verbose) {
 function getCommonConfig({ verbose, debug, staging }) {
   return {
     mode: debug ? 'development' : 'production',
-    devtool: debug ? 'inline-source-map' : false,
+    devtool: debug ? 'inline-source-map' : 'source-map',
     module: {
       rules: [
         {
