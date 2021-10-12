@@ -51,10 +51,12 @@ function setupRules(
               '@babel/preset-env',
               {
                 targets: {
+                  // based on browseslist best practices
+                  // https://github.com/browserslist/browserslist#best-practices
                   browsers:
                     debug && !forcePolyfill
                       ? ['last 1 Chrome version']
-                      : ['> .5% in FR'],
+                      : ['> .1% in FR, last 1 version, not dead'],
                 },
                 modules: false,
                 debug: verbose,

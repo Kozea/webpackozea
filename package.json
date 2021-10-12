@@ -37,7 +37,7 @@
     "@babel/preset-react": "^7.x.x",
     "@babel/register": "^7.x.x",
     "@babel/runtime": "^7.x.x",
-    "@sentry/webpack-plugin": "^1.17.1",
+    "@sentry/webpack-plugin": "^1.x.x",
     "babel-loader": "^8.x.x",
     "babel-plugin-add-react-static-displayname": "^0.x.x",
     "css-loader": "^6.x.x",
