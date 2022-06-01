@@ -66,6 +66,18 @@ function getCommonConfig({ verbose, debug, staging }) {
     module: {
       rules: [
         {
+          test: /\.mdx?$/,
+          use: [
+            {
+              loader: '@mdx-js/loader',
+              /** @type {import('@mdx-js/loader').Options} */
+              options: {
+                providerImportSource: '@mdx-js/react',
+              },
+            },
+          ],
+        },
+        {
           test: /\.tsx?$/,
           exclude: /node_modules/,
           loader: 'ts-loader',
@@ -88,7 +100,7 @@ function getCommonConfig({ verbose, debug, staging }) {
     },
     stats: getStats(verbose),
     resolve: {
-      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx'],
+      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.md', '.mdx'],
     },
     plugins: [
       // Common all
