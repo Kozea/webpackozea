@@ -95,6 +95,18 @@ function setupRules(
           options: {
             sassOptions: {
               includePaths: [dirs.src, dirs.styles, dirs.modules],
+              /* Disable dart-sass 1.77+ deprecation warnings */
+              quietDeps: true,
+              silenceDeprecations: [
+                'color-4-api',
+                'color-functions',
+                'css-function-mixin',
+                'feature-exists',
+                'global-builtin',
+                'import',
+                'legacy-js-api',
+                'mixed-decls',
+              ],
             },
           },
         },
@@ -119,6 +131,18 @@ function setupRules(
               options: {
                 sassOptions: {
                   includePaths: [dirs.src, dirs.styles, dirs.modules],
+                  /* Disable dart-sass 1.77+ deprecation warnings */
+                  quietDeps: true,
+                  silenceDeprecations: [
+                    'color-4-api',
+                    'color-functions',
+                    'css-function-mixin',
+                    'feature-exists',
+                    'global-builtin',
+                    'import',
+                    'legacy-js-api',
+                    'mixed-decls',
+                  ],
                 },
               },
             },
