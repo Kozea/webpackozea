@@ -100,7 +100,6 @@ function setupRules(
               silenceDeprecations: [
                 'color-4-api',
                 'color-functions',
-                'css-function-mixin',
                 'feature-exists',
                 'global-builtin',
                 'import',
@@ -135,7 +134,6 @@ function setupRules(
                   silenceDeprecations: [
                     'color-4-api',
                     'color-functions',
-                    'css-function-mixin',
                     'feature-exists',
                     'global-builtin',
                     'import',
